@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.matpohj</groupId>
-	<artifactId>nfc_2fa</artifactId>
+	<artifactId>Raspi-2FA-Backend-Course-Project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>nfc_2fa</name>
+	<name>Raspi-2FA-Backend-Course-Project</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
