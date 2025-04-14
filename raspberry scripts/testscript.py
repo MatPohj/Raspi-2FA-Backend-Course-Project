@@ -1,9 +1,10 @@
 import requests
 import time
 import sys
+import json
 
 # Replace with your computer's IP address and port
-SERVER_IP = ""  # CHANGE THIS to your computer's local IP address
+SERVER_IP = "192.106.101.104"  # CHANGE THIS to your computer's local IP address
 PORT = 8080               # Change if your Spring Boot app uses a different port
 
 TEST_ENDPOINT = f"http://{SERVER_IP}:{PORT}/api/test/ping"
@@ -20,8 +21,16 @@ def test_connection():
         if response.status_code == 200:
             print("Connection successful!")
             print("Response body:")
-            print(response.json())
-            return True
+            try:
+                if response.text.strip():  # Check if response has content
+                    json_response = response.json()
+                    print(json_response)
+                else:
+                    print("(Empty response)")
+                return True
+            except json.JSONDecodeError:
+                print(f"Raw response (not valid JSON): '{response.text}'")
+                return True
         else:
             print(f"Received error status code: {response.status_code}")
             print("Response body:")
