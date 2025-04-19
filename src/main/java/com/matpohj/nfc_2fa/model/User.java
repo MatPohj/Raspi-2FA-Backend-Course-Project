@@ -1,6 +1,7 @@
 package com.matpohj.nfc_2fa.model;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,6 +22,12 @@ public class User {
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     private Set<String> roles;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<NfcTag> nfcTags = new HashSet<>();
+    
+    @Column(nullable = false)
+    private boolean nfcRequired = false;
     
     // Getters and setters
     public Long getId() {
@@ -53,5 +60,21 @@ public class User {
     
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+    
+    public Set<NfcTag> getNfcTags() {
+        return nfcTags;
+    }
+    
+    public void setNfcTags(Set<NfcTag> nfcTags) {
+        this.nfcTags = nfcTags;
+    }
+    
+    public boolean isNfcRequired() {
+        return nfcRequired;
+    }
+    
+    public void setNfcRequired(boolean nfcRequired) {
+        this.nfcRequired = nfcRequired;
     }
 }
