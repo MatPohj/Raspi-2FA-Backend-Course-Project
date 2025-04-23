@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit CS2 Game Statistics</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Match Results</h1>
+        
+        <div class="card">
+            <form th:action="@{/game-stats/edit/{id}(id=${gameStats.id})}" method="post" th:object="${gameStats}">
+                <div class="form-row">
+                    <label for="kills">Kills:</label>
+                    <input type="number" id="kills" name="kills" th:field="*{kills}" min="0" required>
+                </div>
+                <div class="form-row">
+                    <label for="deaths">Deaths:</label>
+                    <input type="number" id="deaths" name="deaths" th:field="*{deaths}" min="0" required>
+                </div>
+                <div class="form-row">
+                    <label for="assists">Assists:</label>
+                    <input type="number" id="assists" name="assists" th:field="*{assists}" min="0" required>
+                </div>
+                <div class="form-row">
+                    <label for="durationMinutes">Match Duration (minutes):</label>
+                    <input type="number" id="durationMinutes" name="durationMinutes" th:field="*{durationMinutes}" min="1" required>
+                </div>
+                <div class="form-row">
+                    <label for="matchLink">Match Link (optional):</label>
+                    <input type="url" id="matchLink" name="matchLink" th:field="*{matchLink}">
+                </div>
+                <button type="submit" class="btn">Update Match</button>
+            </form>
+        </div>
+        
+        <div class="back-link">
+            <a th:href="@{/game-stats}">Back to Game Statistics</a>
+        </div>
+    </div>
+</body>
+</html>
