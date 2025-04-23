@@ -4,6 +4,7 @@ import com.matpohj.nfc_2fa.model.User;
 import com.matpohj.nfc_2fa.service.NfcService;
 import com.matpohj.nfc_2fa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +18,9 @@ public class DataInitializer implements CommandLineRunner {
     
     @Autowired
     private NfcService nfcService;
-    
-    // Hardcoded admin NFC tag ID - you can replace this with your actual tag ID
-    private static final String ADMIN_NFC_TAG = "245861573272";
+
+    @Value("${app.security.admin-nfc-tag}")
+    private String adminNfcTag;
     
     @Override
     public void run(String... args) throws Exception {
@@ -31,8 +32,8 @@ public class DataInitializer implements CommandLineRunner {
         
         // Register predefined NFC tag for admin
         try {
-            nfcService.registerNfcTag(ADMIN_NFC_TAG, "admin");
-            System.out.println("Admin NFC tag registered: " + ADMIN_NFC_TAG);
+            nfcService.registerNfcTag(adminNfcTag, "admin");
+            System.out.println("Admin NFC tag registered successfully");
         } catch (IllegalArgumentException e) {
             // Tag might already exist, just log it
             System.out.println("Note: " + e.getMessage());
