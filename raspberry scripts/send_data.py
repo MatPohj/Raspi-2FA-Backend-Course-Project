@@ -5,6 +5,7 @@ from mfrc522 import SimpleMFRC522
 import requests
 import time
 import argparse
+import sys
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='NFC Authentication Client')
@@ -38,13 +39,16 @@ def validate_nfc(tag_id, username):
             print(f"Using session ID: {args.session}")
             if result.get("valid", False):
                 print("✅ Access granted!")
+                return True
             else:
-                print("❌ Access denied: Invalid ta or wrong session id")
+                print("❌ Access denied: Invalid tag or wrong session id")
         else:
             print(f"❌ Server error: {response.status_code}")
 
     except Exception as e:
         print(f"❌ Connection error: {e}")
+    
+    return False
 
 def main():
     print(f"NFC Authentication for {args.username}")
@@ -58,8 +62,13 @@ def main():
             print(f"Tag detected! ID: {tag_id}")
 
             # Validate with server
-            validate_nfc(tag_id, args.username)
-
+            access_granted = validate_nfc(tag_id, args.username)
+            
+            # Exit if access is granted
+            if access_granted:
+                print("Authentication successful! Exiting...")
+                break
+                
             # Wait before next read
             time.sleep(2)
             print("\nPlace your NFC tag on the reader...")

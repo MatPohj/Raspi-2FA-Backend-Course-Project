@@ -49,6 +49,12 @@
                 <button type="submit">Direct Verification (Skip NFC)</button>
             </form>
         </div>
+        
+        <div class="back-link">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-link">Back to Login</button>
+            </form>
+        </div>
     </div>
     
     <script th:src="@{/js/nfc-verification.js}"></script>

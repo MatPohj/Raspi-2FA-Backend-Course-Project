@@ -24,13 +24,10 @@ public class VerificationController {
             String username = authentication.getName();
             model.addAttribute("username", username);
 
-            // Only create a new session if not already present
-            String sessionId = (String) httpSession.getAttribute("nfcSessionId");
-            if (sessionId == null) {
-                sessionId = verificationSessionService.createSession(username);
-                httpSession.setAttribute("nfcSessionId", sessionId);
-                System.out.println("Created session ID: " + sessionId + " for user: " + username);
-            }
+            // Always create a new session ID for fresh verification
+            String sessionId = verificationSessionService.createSession(username);
+            httpSession.setAttribute("nfcSessionId", sessionId);
+            System.out.println("Created session ID: " + sessionId + " for user: " + username);
             model.addAttribute("sessionId", sessionId);
         } else {
             System.out.println("Warning: No authentication found for NFC verification");
