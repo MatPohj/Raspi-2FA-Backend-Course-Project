@@ -5,21 +5,24 @@
     <title th:text="${title}">Home</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-    <h1 th:text="${message}">Welcome</h1>
-    
-    <div sec:authorize="isAnonymous()">
-        <a href="/login">Login</a>
-    </div>
-    
-    <div sec:authorize="isAuthenticated()">
-        <p>Welcome, <span sec:authentication="name"></span>!</p>
-        <p sec:authorize="hasRole('ADMIN')">You have admin privileges!</p>
-        <p sec:authorize="hasRole('USER')">You have user privileges!</p>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">Logout</button>
-        </form>
+    <div class="container">
+        <h1 th:text="${message}">Welcome</h1>
+        
+        <div sec:authorize="isAnonymous()" class="card">
+            <a href="/login" class="btn">Login</a>
+        </div>
+        
+        <div sec:authorize="isAuthenticated()" class="card">
+            <p>Welcome, <span sec:authentication="name" class="user-name"></span>!</p>
+            <div sec:authorize="hasRole('ADMIN')" class="admin-badge">Admin privileges</div>
+            <div sec:authorize="hasRole('USER')" class="user-badge">User privileges</div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-secondary">Logout</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

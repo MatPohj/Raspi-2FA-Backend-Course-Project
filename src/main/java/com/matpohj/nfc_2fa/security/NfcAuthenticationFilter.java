@@ -10,17 +10,32 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class NfcAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
+    private List<RequestMatcher> staticResourceMatchers = new ArrayList<>();
     
     public NfcAuthenticationFilter(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+    
+    public void setStaticResourceMatchers(RequestMatcher... matchers) {
+        this.staticResourceMatchers = Arrays.asList(matchers);
+    }
+    
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Skip filter for static resources
+        return staticResourceMatchers.stream().anyMatch(matcher -> matcher.matches(request));
     }
     
     @Override

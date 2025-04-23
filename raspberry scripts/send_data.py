@@ -8,7 +8,7 @@ import argparse
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='NFC Authentication Client')
-parser.add_argument('--server', default='http://localhost:8080', 
+parser.add_argument('--server', default='http://192.168.101.104:8080', 
                     help='Server URL')
 parser.add_argument('--username', required=True, 
                     help='Username to authenticate')
@@ -31,7 +31,7 @@ def validate_nfc(tag_id, username):
             json={"tagId": str(tag_id), "username": username, "sessionId": args.session},
             timeout=5
         )
-        
+
         if response.status_code == 200:
             result = response.json()
             print(f"Full response: {response.json()}")
@@ -39,10 +39,10 @@ def validate_nfc(tag_id, username):
             if result.get("valid", False):
                 print("✅ Access granted!")
             else:
-                print("❌ Access denied: Invalid tag")
+                print("❌ Access denied: Invalid ta or wrong session id")
         else:
             print(f"❌ Server error: {response.status_code}")
-            
+
     except Exception as e:
         print(f"❌ Connection error: {e}")
 
@@ -56,14 +56,14 @@ def main():
             # Read tag
             tag_id, text = reader.read()
             print(f"Tag detected! ID: {tag_id}")
-            
+
             # Validate with server
             validate_nfc(tag_id, args.username)
-            
+
             # Wait before next read
             time.sleep(2)
             print("\nPlace your NFC tag on the reader...")
-            
+
     except KeyboardInterrupt:
         print("\nExiting...")
     finally:

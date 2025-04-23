@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +29,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
+                // Static resources must be first to ensure they're accessible
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/").permitAll()
                 .requestMatchers("/api/test/ping").permitAll()
                 .requestMatchers("/api/nfc/validate").permitAll()
                 .requestMatchers("/api/verification/status").permitAll()
@@ -54,7 +58,13 @@ public class SecurityConfig {
     
     @Bean
     public NfcAuthenticationFilter nfcAuthenticationFilter() {
-        return new NfcAuthenticationFilter(userRepository);
+        NfcAuthenticationFilter filter = new NfcAuthenticationFilter(userRepository);
+        filter.setStaticResourceMatchers(
+            new AntPathRequestMatcher("/css/**"),
+            new AntPathRequestMatcher("/js/**"),
+            new AntPathRequestMatcher("/images/**")
+        );
+        return filter;
     }
     
     @Bean
