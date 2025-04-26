@@ -11,13 +11,13 @@ import java.util.Set;
 
 @Service
 public class UserService {
-    
+
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     public User createUser(String username, String password, Set<String> roles) {
         User user = new User();
         user.setUsername(username);
