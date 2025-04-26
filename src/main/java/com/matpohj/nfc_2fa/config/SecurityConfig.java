@@ -17,9 +17,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    
+
     private final UserRepository userRepository;
-    
+
     public SecurityConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -27,46 +27,42 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authorize -> authorize
-                // Static resources must be first to ensure they're accessible
-                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/login", "/").permitAll()
-                .requestMatchers("/api/test/ping").permitAll()
-                .requestMatchers("/api/nfc/validate").permitAll()
-                .requestMatchers("/api/verification/status").permitAll()
-                .requestMatchers("/nfc-verification").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("USER")
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-                .defaultSuccessUrl("/", true)
-            )
-            .logout(logout -> logout
-                .permitAll()
-                .logoutSuccessUrl("/")
-            )
-            .headers(headers -> headers.frameOptions().disable())
-            .addFilterBefore(nfcAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-            
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize
+                        // Static resources must be first to ensure they're accessible
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/").permitAll()
+                        .requestMatchers("/api/test/ping").permitAll()
+                        .requestMatchers("/api/nfc/validate").permitAll()
+                        .requestMatchers("/api/verification/status").permitAll()
+                        .requestMatchers("/nfc-verification").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/", true))
+                .logout(logout -> logout
+                        .permitAll()
+                        .logoutSuccessUrl("/"))
+                .headers(headers -> headers.frameOptions().disable())
+                .addFilterBefore(nfcAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
-    
+
     @Bean
     public NfcAuthenticationFilter nfcAuthenticationFilter() {
         NfcAuthenticationFilter filter = new NfcAuthenticationFilter(userRepository);
         filter.setStaticResourceMatchers(
-            new AntPathRequestMatcher("/css/**"),
-            new AntPathRequestMatcher("/js/**"),
-            new AntPathRequestMatcher("/images/**")
-        );
+                new AntPathRequestMatcher("/css/**"),
+                new AntPathRequestMatcher("/js/**"),
+                new AntPathRequestMatcher("/images/**"));
         return filter;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

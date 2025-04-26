@@ -15,27 +15,27 @@ import java.util.Set;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private NfcService nfcService;
-    
+
     @Autowired
     private GameStatsRepository gameStatsRepository;
 
     @Value("${app.security.admin-nfc-tag}")
     private String adminNfcTag;
-    
+
     @Override
     public void run(String... args) throws Exception {
         // Create admin user
         User admin = userService.createUser("admin", "adminpassword", Set.of("ADMIN", "USER"));
-        
+
         // Create regular user
         User regularUser = userService.createUser("user", "userpassword", Set.of("USER"));
-        
+
         // Register predefined NFC tag for admin
         try {
             nfcService.registerNfcTag(adminNfcTag, "admin");
@@ -44,24 +44,24 @@ public class DataInitializer implements CommandLineRunner {
             // Tag might already exist, just log it
             System.out.println("Note: " + e.getMessage());
         }
-        
+
         // Create test game stats
         createTestGameStats(admin);
         createTestGameStats(regularUser);
     }
-    
+
     private void createTestGameStats(User user) {
         // Only create test data if no stats exist for this user
         if (!gameStatsRepository.findByUserOrderByCreatedAtDesc(user).isEmpty()) {
             return;
         }
-        
+
         boolean isAdmin = user.getRoles().contains("ADMIN");
         System.out.println("Creating test data for " + (isAdmin ? "admin" : "regular user"));
-        
+
         if (isAdmin) {
-            // Admin gets different matches 
-            
+            // Admin gets different matches
+
             // Amazing match
             GameStats match1 = new GameStats();
             match1.setUser(user);
@@ -74,7 +74,7 @@ public class DataInitializer implements CommandLineRunner {
             match1.setMap("Ancient");
             match1.setGame("CS2");
             gameStatsRepository.save(match1);
-            
+
             // Very good match
             GameStats match2 = new GameStats();
             match2.setUser(user);
@@ -86,7 +86,7 @@ public class DataInitializer implements CommandLineRunner {
             match2.setMap("Vertigo");
             match2.setGame("CS2");
             gameStatsRepository.save(match2);
-            
+
             // Different game
             GameStats match3 = new GameStats();
             match3.setUser(user);
@@ -99,7 +99,7 @@ public class DataInitializer implements CommandLineRunner {
             match3.setMap("Split");
             match3.setGame("Valorant");
             gameStatsRepository.save(match3);
-            
+
             // Older match
             GameStats match4 = new GameStats();
             match4.setUser(user);
@@ -112,8 +112,8 @@ public class DataInitializer implements CommandLineRunner {
             match4.setGame("CS2");
             gameStatsRepository.save(match4);
         } else {
-            // Regular user 
-            
+            // Regular user
+
             // Good match
             GameStats match1 = new GameStats();
             match1.setUser(user);
@@ -126,7 +126,7 @@ public class DataInitializer implements CommandLineRunner {
             match1.setMap("Mirage");
             match1.setGame("CS2");
             gameStatsRepository.save(match1);
-            
+
             // Average match
             GameStats match2 = new GameStats();
             match2.setUser(user);
@@ -138,7 +138,7 @@ public class DataInitializer implements CommandLineRunner {
             match2.setMap("Dust II");
             match2.setGame("CS2");
             gameStatsRepository.save(match2);
-            
+
             // Bad match
             GameStats match3 = new GameStats();
             match3.setUser(user);
@@ -151,7 +151,7 @@ public class DataInitializer implements CommandLineRunner {
             match3.setMap("Inferno");
             match3.setGame("CS2");
             gameStatsRepository.save(match3);
-            
+
             // Really good match
             GameStats match4 = new GameStats();
             match4.setUser(user);
@@ -164,7 +164,7 @@ public class DataInitializer implements CommandLineRunner {
             match4.setGame("CS2");
             gameStatsRepository.save(match4);
         }
-        
+
         System.out.println("Created test game statistics for user: " + user.getUsername());
     }
 }

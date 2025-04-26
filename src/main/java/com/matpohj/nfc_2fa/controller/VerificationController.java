@@ -14,10 +14,10 @@ import java.util.Map;
 
 @Controller
 public class VerificationController {
-    
+
     @Autowired
     private VerificationSessionService verificationSessionService;
-    
+
     @GetMapping("/nfc-verification")
     public String nfcVerificationPage(Authentication authentication, Model model, HttpSession httpSession) {
         if (authentication != null) {
@@ -34,7 +34,7 @@ public class VerificationController {
         }
         return "nfc-verification";
     }
-    
+
     @PostMapping("/verify-nfc")
     public String verifyNfc(@RequestParam("verified") boolean verified, HttpSession session) {
         if (verified) {
@@ -43,19 +43,19 @@ public class VerificationController {
         }
         return "redirect:/nfc-verification?error";
     }
-    
+
     @GetMapping("/api/verification/status")
     @ResponseBody
     public ResponseEntity<?> checkVerificationStatus(@RequestParam("sessionId") String sessionId) {
         boolean completed = verificationSessionService.isVerificationComplete(sessionId);
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("completed", completed);
-        
+
         if (completed) {
             verificationSessionService.cleanup(sessionId);
         }
-        
+
         return ResponseEntity.ok(response);
     }
 }
