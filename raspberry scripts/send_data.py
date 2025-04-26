@@ -9,7 +9,7 @@ import sys
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='NFC Authentication Client')
-parser.add_argument('--server', default='http://192.168.101.104:8080', 
+parser.add_argument('--server', default='https://raspi-2fa-backend-project-9d7fc3bfc347.herokuapp.com/', 
                     help='Server URL')
 parser.add_argument('--username', required=True, 
                     help='Username to authenticate')
