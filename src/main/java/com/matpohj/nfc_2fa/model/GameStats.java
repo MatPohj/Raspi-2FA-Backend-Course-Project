@@ -21,7 +21,25 @@ public class GameStats {
     private int durationMinutes;
     private String matchLink;
     private LocalDateTime createdAt;
-    
+    private String map;
+    private String game;
+
+    public String getMap() {
+        return map;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
+
+    public String getGame() {
+        return game;
+    }
+
+    public void setGame(String game) {
+        this.game = game;
+    }
+
     // Calculated field (not stored in DB)
     @Transient
     private double kdRatio;

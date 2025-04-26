@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>CS2 Game Statistics</title>
+    <title>Game Statistics diary</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
+        .container {
+            max-width: 90% !important; /* Override the default container width */
+            width: 90%;
+        }
+        
         .stats-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            table-layout: auto; /* Let browser calculate optimal column widths */
         }
+        
         .stats-table th, .stats-table td {
             padding: 8px;
             text-align: center;
             border: 1px solid #ddd;
+            white-space: nowrap; /* Prevent text wrapping in cells */
         }
+        
         .stats-table th {
             background-color: #f2f2f2;
         }
+        
+        /* Add horizontal scrolling for small screens */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        /* Column-specific widths */
+        .stats-table .col-date { min-width: 120px; }
+        .stats-table .col-game { min-width: 80px; }
+        .stats-table .col-map { min-width: 100px; }
+        .stats-table .col-number { width: 60px; }
+        .stats-table .col-link { min-width: 90px; }
+        .stats-table .col-actions { width: 120px; }
+        
         .form-row {
             margin-bottom: 10px;
         }
@@ -51,47 +75,72 @@
                     <label for="matchLink">Match Link (optional):</label>
                     <input type="url" id="matchLink" name="matchLink" th:field="*{matchLink}">
                 </div>
+                <div class="form-row">
+                    <label for="map">Map (optional):</label>
+                    <input type="text" id="map" name="map" th:field="*{map}">
+                </div>
+                <div class="form-row">
+                    <label for="game">Game (optional):</label>
+                    <input type="text" id="game" name="game" th:field="*{game}">
+                </div>                                
                 <button type="submit" class="btn">Add Match</button>
             </form>
         </div>
         
         <div class="card" th:if="${not #lists.isEmpty(gameStatsList)}">
             <h2>Your Match History</h2>
-            <table class="stats-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Kills</th>
-                        <th>Deaths</th>
-                        <th>Assists</th>
-                        <th>K/D Ratio</th>
-                        <th>Duration</th>
-                        <th>Match Link</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="stats : ${gameStatsList}">
-                        <td th:text="${#temporals.format(stats.createdAt, 'yyyy-MM-dd HH:mm')}">2023-06-01</td>
-                        <td th:text="${stats.kills}">10</td>
-                        <td th:text="${stats.deaths}">5</td>
-                        <td th:text="${stats.assists}">3</td>
-                        <td th:text="${#numbers.formatDecimal(stats.kdRatio, 1, 2)}">2.00</td>
-                        <td th:text="${stats.durationMinutes} + ' min'">45 min</td>
-                        <td>
-                            <a th:if="${not #strings.isEmpty(stats.matchLink)}" 
-                               th:href="${stats.matchLink}" target="_blank">View Match</a>
-                            <span th:if="${#strings.isEmpty(stats.matchLink)}">N/A</span>
-                        </td>
-                        <td>
-                            <a th:href="@{/game-stats/edit/{id}(id=${stats.id})}" class="btn">Edit</a>
-                            <a th:href="@{/game-stats/delete/{id}(id=${stats.id})}" 
-                               class="btn"
-                               onclick="return confirm('Are you sure you want to delete this match?')">Delete</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th class="col-date">Date</th>
+                            <th class="col-game">Game</th>
+                            <th class="col-map">Map</th>
+                            <th class="col-number">Kills</th>
+                            <th class="col-number">Deaths</th>
+                            <th class="col-number">Assists</th>
+                            <th class="col-number">K/D Ratio</th>
+                            <th class="col-number">Duration</th>
+                            <th class="col-link">Match Link</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<!-- 
+    Game statistics table row rendering:
+            - th:each iterates through each game stat record in gameStatsList
+            - Static text (like "CS2", "Mirage", "10") are placeholders visible only in IDE/source
+            - At runtime, Thymeleaf replaces these with actual values from the database
+            - Special formatters are used for:
+            * createdAt: formatted as date/time
+            * kdRatio: formatted as decimal with 2 decimal places
+            * durationMinutes: appended with " min" text
+            These rows dynamically expand based on the number of records in the database.
+-->
+                        <tr th:each="stats : ${gameStatsList}">
+                            <td th:text="${#temporals.format(stats.createdAt, 'yyyy-MM-dd HH:mm')}">2023-06-01</td>
+                            <td th:text="${stats.game}">CS2</td>
+                            <td th:text="${stats.map}">Mirage</td>
+                            <td th:text="${stats.kills}">10</td>
+                            <td th:text="${stats.deaths}">5</td>
+                            <td th:text="${stats.assists}">3</td>
+                            <td th:text="${#numbers.formatDecimal(stats.kdRatio, 1, 2)}">2.00</td>
+                            <td th:text="${stats.durationMinutes} + ' min'">45 min</td>
+                            <td>
+                                <a th:if="${not #strings.isEmpty(stats.matchLink)}" 
+                                   th:href="${stats.matchLink}" target="_blank">View Match</a>
+                                <span th:if="${#strings.isEmpty(stats.matchLink)}">N/A</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/game-stats/edit/{id}(id=${stats.id})}" class="btn">Edit</a>
+                                <a th:href="@{/game-stats/delete/{id}(id=${stats.id})}" 
+                                   class="btn"
+                                   onclick="return confirm('Are you sure you want to delete this match?')">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <div class="card" th:if="${#lists.isEmpty(gameStatsList)}">
