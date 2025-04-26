@@ -50,7 +50,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>CS2 Game Statistics</h1>
+        <h1>Game stats diary</h1>
         
         <div class="card">
             <h2>Add New Match</h2>
@@ -118,7 +118,7 @@
             These rows dynamically expand based on the number of records in the database.
 -->
                         <tr th:each="stats : ${gameStatsList}">
-                            <td th:text="${#temporals.format(stats.createdAt, 'yyyy-MM-dd HH:mm')}">2023-06-01</td>
+                            <td th:text="${#temporals.format(stats.createdAt, 'dd.MM.yyyy HH:mm')}">2023-06-01</td>
                             <td th:text="${stats.game}">CS2</td>
                             <td th:text="${stats.map}">Mirage</td>
                             <td th:text="${stats.kills}">10</td>
