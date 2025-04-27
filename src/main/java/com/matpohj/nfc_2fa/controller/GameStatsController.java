@@ -33,9 +33,13 @@ public class GameStatsController {
 
     @PostMapping
     public String addGameStats(
-            @ModelAttribute("newGameStats") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) GameStats gameStats, 
+            @ModelAttribute("newGameStats") GameStats gameStats, 
             Authentication authentication) {
         if (authentication != null) {
+            // Ensure the date is set if it's null
+            if (gameStats.getCreatedAt() == null) {
+                gameStats.setCreatedAt(LocalDateTime.now());
+            }
             gameStatsService.saveGameStats(gameStats, authentication.getName());
         }
         return "redirect:/game-stats";
@@ -50,9 +54,13 @@ public class GameStatsController {
     @PostMapping("/edit/{id}")
     public String updateGameStats(
             @PathVariable Long id, 
-            @ModelAttribute("gameStats") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) GameStats gameStats,
+            @ModelAttribute("gameStats") GameStats gameStats,
             Authentication authentication) {
         if (authentication != null) {
+            // Ensure date is set if null
+            if (gameStats.getCreatedAt() == null) {
+                gameStats.setCreatedAt(LocalDateTime.now());
+            }
             gameStats.setId(id);
             gameStatsService.saveGameStats(gameStats, authentication.getName());
         }
