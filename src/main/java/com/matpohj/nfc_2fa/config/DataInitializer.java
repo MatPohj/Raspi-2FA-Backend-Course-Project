@@ -3,6 +3,7 @@ package com.matpohj.nfc_2fa.config;
 import com.matpohj.nfc_2fa.model.GameStats;
 import com.matpohj.nfc_2fa.model.User;
 import com.matpohj.nfc_2fa.repository.GameStatsRepository;
+import com.matpohj.nfc_2fa.repository.UserRepository;
 import com.matpohj.nfc_2fa.service.NfcService;
 import com.matpohj.nfc_2fa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -25,6 +27,9 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private GameStatsRepository gameStatsRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Value("${app.security.admin-nfc-tag}")
     private String adminNfcTag;
 
@@ -36,11 +41,27 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Create admin user
-        User admin = userService.createUser("admin", adminPassword, Set.of("ADMIN", "USER"));
+        // Check if admin user exists first
+        Optional<User> existingAdmin = userRepository.findByUsername("admin");
+        User admin;
+        if (existingAdmin.isEmpty()) {
+            admin = userService.createUser("admin", adminPassword, Set.of("ADMIN", "USER"));
+            System.out.println("Created admin user");
+        } else {
+            admin = existingAdmin.get();
+            System.out.println("Admin user already exists");
+        }
         
-        // Create regular user
-        User regularUser = userService.createUser("user", userPassword, Set.of("USER"));
+        // Check if regular user exists first
+        Optional<User> existingUser = userRepository.findByUsername("user");
+        User regularUser;
+        if (existingUser.isEmpty()) {
+            regularUser = userService.createUser("user", userPassword, Set.of("USER"));
+            System.out.println("Created regular user");
+        } else {
+            regularUser = existingUser.get();
+            System.out.println("Regular user already exists");
+        }
         
         // Register predefined NFC tag for admin
         try {
