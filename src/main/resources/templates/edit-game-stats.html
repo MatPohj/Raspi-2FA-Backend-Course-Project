@@ -40,6 +40,11 @@
                     <label for="game">Game (optional):</label>
                     <input type="text" id="game" name="game" th:field="*{game}">
                 </div>
+                <div class="form-row">
+                    <label for="createdAt">Date and Time:</label>
+                    <input type="datetime-local" id="createdAt" name="createdAt" 
+                           th:value="${#temporals.format(gameStats.createdAt, 'yyyy-MM-dd''T''HH:mm')}" />
+                </div>
                 <button type="submit" class="btn">Update Match</button>
             </form>
         </div>

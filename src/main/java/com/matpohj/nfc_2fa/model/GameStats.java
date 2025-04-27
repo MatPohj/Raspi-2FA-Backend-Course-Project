@@ -45,7 +45,10 @@ public class GameStats {
     private double kdRatio;
 
     public GameStats() {
-        this.createdAt = LocalDateTime.now();
+        // Only set the date if it's not already set
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
     // Getters and setters
@@ -112,7 +115,7 @@ public class GameStats {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
+    
     // Calculate K/D ratio
     public double getKdRatio() {
         if (deaths == 0) {
