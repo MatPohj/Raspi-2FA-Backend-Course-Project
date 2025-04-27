@@ -26,6 +26,7 @@ public class GameStatsController {
             
             // Initialize with current time
             GameStats newGameStats = new GameStats();
+            newGameStats.setCreatedAt(LocalDateTime.now()); // Explicitly set the current time
             model.addAttribute("newGameStats", newGameStats);
         }
         return "game-stats";
@@ -34,12 +35,11 @@ public class GameStatsController {
     @PostMapping
     public String addGameStats(
             @ModelAttribute("newGameStats") GameStats gameStats, 
+            @RequestParam("createdAt") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime createdAt,
             Authentication authentication) {
         if (authentication != null) {
-            // Ensure the date is set if it's null
-            if (gameStats.getCreatedAt() == null) {
-                gameStats.setCreatedAt(LocalDateTime.now());
-            }
+            // Use the provided date time
+            gameStats.setCreatedAt(createdAt);
             gameStatsService.saveGameStats(gameStats, authentication.getName());
         }
         return "redirect:/game-stats";
@@ -55,12 +55,10 @@ public class GameStatsController {
     public String updateGameStats(
             @PathVariable Long id, 
             @ModelAttribute("gameStats") GameStats gameStats,
+            @RequestParam("createdAt") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime createdAt,
             Authentication authentication) {
         if (authentication != null) {
-            // Ensure date is set if null
-            if (gameStats.getCreatedAt() == null) {
-                gameStats.setCreatedAt(LocalDateTime.now());
-            }
+            gameStats.setCreatedAt(createdAt);
             gameStats.setId(id);
             gameStatsService.saveGameStats(gameStats, authentication.getName());
         }

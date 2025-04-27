@@ -86,7 +86,7 @@
                 <div class="form-row">
                     <label for="createdAt">Date and Time:</label>
                     <input type="datetime-local" id="createdAt" name="createdAt" 
-                           th:value="${#temporals.format(newGameStats.createdAt, 'yyyy-MM-dd''T''HH:mm')}" />
+                           th:value="${#temporals.format(newGameStats.createdAt, 'yyyy-MM-dd''T''HH:mm')}" required>
                 </div>                              
                 <button type="submit" class="btn">Add Match</button>
             </form>
