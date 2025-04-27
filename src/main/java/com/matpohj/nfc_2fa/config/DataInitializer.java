@@ -9,6 +9,7 @@ import com.matpohj.nfc_2fa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Value("${app.security.admin-nfc-tag}")
     private String adminNfcTag;
@@ -49,6 +53,13 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Created admin user");
         } else {
             admin = existingAdmin.get();
+            // Update password if it's from an environment variable
+            String envPassword = System.getenv("APP_ADMIN_PASSWORD");
+            if (envPassword != null && !envPassword.isEmpty()) {
+                admin.setPassword(passwordEncoder.encode(adminPassword));
+                userRepository.save(admin);
+                System.out.println("Admin password updated from environment variable");
+            }
             System.out.println("Admin user already exists");
         }
         
