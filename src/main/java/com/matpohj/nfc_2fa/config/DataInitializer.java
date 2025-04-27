@@ -28,14 +28,20 @@ public class DataInitializer implements CommandLineRunner {
     @Value("${app.security.admin-nfc-tag}")
     private String adminNfcTag;
 
+    @Value("${app.admin.password:adminpassword}")
+    private String adminPassword;
+
+    @Value("${app.user.password:userpassword}")
+    private String userPassword;
+
     @Override
     public void run(String... args) throws Exception {
         // Create admin user
-        User admin = userService.createUser("admin", "adminpassword", Set.of("ADMIN", "USER"));
-
+        User admin = userService.createUser("admin", adminPassword, Set.of("ADMIN", "USER"));
+        
         // Create regular user
-        User regularUser = userService.createUser("user", "userpassword", Set.of("USER"));
-
+        User regularUser = userService.createUser("user", userPassword, Set.of("USER"));
+        
         // Register predefined NFC tag for admin
         try {
             nfcService.registerNfcTag(adminNfcTag, "admin");
