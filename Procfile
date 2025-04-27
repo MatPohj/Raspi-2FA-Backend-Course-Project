@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar target/Raspi-2FA-Backend-Course-Project-0.0.1-SNAPSHOT.jar --server.port=$PORT
+web: java $JAVA_OPTS -jar target/Raspi-2FA-Backend-Course-Project-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod --server.port=$PORT
